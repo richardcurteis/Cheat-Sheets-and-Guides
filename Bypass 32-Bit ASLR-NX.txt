@@ -42,7 +42,8 @@ buf += arg_addr
 # !! ASLR enabled
 CMD - ldd $binary | grep libc
 # Check which/how many bits that are changing, workout possible permutations - n ^ 9
-# DEMPO: 2 ^ 9 = 512 
+# DEMO: Assume 2 bits are changing
+# DEMO: 2 ** 9 = 512 
 
 1. Look for changing byte
 2. Move exploit script to target machine
