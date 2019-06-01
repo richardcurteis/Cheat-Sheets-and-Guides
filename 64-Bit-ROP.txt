@@ -1,7 +1,7 @@
 64-Bit ROP Steps
 
 # 64-Bit exploitation, arguments go in registers not on the stack
-# Remember order registers will be called in
+# Remember order registers will be called in: rdi, rsi, rdx, rcx
 # Use p64() to convert addresses to 64 byte friendly format
 
 # Stage 1
