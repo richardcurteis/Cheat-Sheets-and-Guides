@@ -4,9 +4,12 @@
 # Remember order registers will be called in: rdi, rsi, rdx, rcx
 # Use p64() to convert addresses to 64 byte friendly format
 
-# PRELIMS
-1. Identify libc version used by target binary...
+# NOTES
+1. Possible way to identify libc version used by target binary...
 CMD - ldd -r -v $binary
+# Alt - using leaked puts address
+# Download libc database
+CMD - ./find _IO_puts $leaked_puts_address
 
 # Stage 1
 
