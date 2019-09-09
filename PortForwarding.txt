@@ -1,0 +1,14 @@
+# plink remote port forwarding
+plink -l $user -pw $password $attacking_machine_ip -R $attacker_port:127.0.0.1:$victim_port
+$command 127.0.0.1:$attacker_port
+
+# SSH Remote Port Forwarding
+ssh user@target_ip -R $remote_port:127.0.0.1:$local_port
+
+# SSH Local Port Forwarding
+ssh user@target_ip -L $initiating_ip:$initiating_port:$target_ip:$target_port
+
+# SSH Dynamic Port Forwarding
+# Create a local SOCKS4 proxy
+# Example: ssh -D 8080 root@pwned.com
+ssh -D $local_proxy_port -p $remote_port $target
