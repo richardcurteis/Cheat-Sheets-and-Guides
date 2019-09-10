@@ -21,3 +21,7 @@ ssh -f -N -D 127.0.0.1:8080 -p 2222 user@local
 # Set proxychains
 # /etc/proxychains.conf
 socks4 127.0.0.1 8080
+
+## IPTables
+# https://www.andreafortuna.org/2019/05/08/iptables-a-simple-cheatsheet/
+iptables -t nat -A PREROUTING -p tcp -d 1.2.3.4 --dport 422 -j DNAT --to 192.168.0.100:22
