@@ -11,9 +11,7 @@ fg
 
 # In reverse shell
 reset
-export SHELL=bash
-export TERM=xterm-256color
-stty rows 48 columns 198
+export SHELL=bash;export TERM=xterm-256color;stty rows 48 columns 198
 
 ### socat
 #Listener:
