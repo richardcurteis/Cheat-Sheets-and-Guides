@@ -3,6 +3,8 @@
 # Victim == client
 # Hacker == server
 
+https://github.com/richardcurteis/Cheat-Sheets-and-Guides/blob/master/Reverse%20Pivot.png
+
 # Set up server to listen on port 8000. Be verbose
 kali:~# chisel server -p 8000 -reverse -v
 
