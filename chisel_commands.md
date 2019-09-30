@@ -1,5 +1,8 @@
 Reverse Pivot
-Chisel is like SSH tunneling but everything is reversed. Victim tunnels to hacker.
+Chisel is like SSH tunneling but everything is reversed.
+
+Victim tunnels to hacker.
+
 Victim == client
 Hacker == server
 
