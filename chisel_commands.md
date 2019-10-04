@@ -4,6 +4,7 @@ Chisel is like SSH tunneling but everything is reversed.
 Victim tunnels to hacker.
 
 Victim == client
+
 Hacker == server
 
 https://github.com/richardcurteis/Cheat-Sheets-and-Guides/blob/master/Reverse%20Pivot.png
