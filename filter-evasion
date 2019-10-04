@@ -1,6 +1,0 @@
-
-SELECT * FROM tblCustomers where cust_name='""'; SELECT * from users WHERE name = admin; -- Query_1"' and cust_password='"Query_2"'
--- "'; SELECT * from users WHERE name = admin; -- 
--- is
--- 0x22273B2053454C454354202A2066726F6D207573657273205748455245206E616D65203D2061646D696E3B202D2D20
--- Could link with OR??
