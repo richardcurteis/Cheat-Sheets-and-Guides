@@ -14,7 +14,7 @@ Set up server to listen on port 8000. Be verbose...
 
 ```kali:~# chisel server -p 8000 -reverse -v```
 
-Create client and connect to server tell server where to listen and which port to open (ip:port) then where to forward traffic to, ```$target_ip:$target_port```.
+Create client and connect to server on port n and tell server which port to open (ip:port) and then where to forward traffic to, ```$target_ip:$target_port``` from that opened port.
 
 ```intermediary_victim:~# chisel client $kali_ip:8000 R:127.0.0.1:8001:$target_ip:$target_port```
 
