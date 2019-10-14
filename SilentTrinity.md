@@ -1,4 +1,4 @@
-NOTE: Other options are available for various 'use' statements. Explore yourself.
+NOTE: *Other options are available for various 'use' statements. Explore yourself.*
 
 #### Set up a listener ####
 
